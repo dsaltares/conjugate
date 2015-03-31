@@ -10,11 +10,11 @@ class VerbixParser:
 		except Exception as e:
 			print 'Error parsing document: ', e
 
-	def get_verb(self, language, document):
+	def get_infinitive(self, language, document):
 		soup = BeautifulSoup(document, 'html5')
 
 		for a_element in soup.select('li > a'):
-			if a_element['href'].find('D1=%s'%language) != -1:
+			if a_element['href'].find('D1=%s&'%language) != -1:
 				return a_element.string
 
 	def __get_translation(self, document):

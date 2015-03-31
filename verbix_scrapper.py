@@ -12,7 +12,7 @@ class VerbixScrapper:
 		'ca': 4
 	}
 
-	def get_verb(self, language, verb):
+	def get_infinitive(self, language, verb):
 		base_url = 'http://www.verbix.com/find-verb/'
 		params = urllib.urlencode({
 			'verb': verb,
@@ -23,9 +23,9 @@ class VerbixScrapper:
 		response = urllib2.urlopen(request)
 
 		parser = verbix_parser.VerbixParser()
-		return parser.get_verb(VerbixScrapper.__languages[language], response.read())
+		return parser.get_infinitive(VerbixScrapper.__languages[language], response.read())
 
-	def get_conjugations(self, language, verb):
+	def get_verb_info(self, language, verb):
 		base_url = 'http://www.verbix.com/webverbix/go.php'
 
 		try:
