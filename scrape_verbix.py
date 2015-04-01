@@ -39,7 +39,7 @@ def commit_verb_info(db, language, verb_info):
 
 	if db.insert_verb(language, verb, verb_data_json) is False:
 		print 'Failed to get insert %s in db' % verb
-		return Dalse
+		return False
 
 	for meaning in verb_info['meanings']:
 		if db.insert_translation(language, verb, meaning['eng'], meaning['description']) is False:
