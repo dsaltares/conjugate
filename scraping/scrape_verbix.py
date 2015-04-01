@@ -3,6 +3,7 @@ import argparse
 import os
 import urllib2
 import urllib
+import json
 import verbix_scraper
 import verbs_db
 
@@ -10,12 +11,16 @@ def get_arguments():
 	parser = argparse.ArgumentParser()
 	parser.add_argument('language', help='Language code')
 	parser.add_argument('dictionary', help='File with the list of words to retrieve')
-	parser.add_argument('db_host', help='Database hostname')
-	parser.add_argument('db_user', help='Database username')
-	parser.add_argument('db_password', help='Database password')
-	parser.add_argument('db_name', help='Database name')
 	parser.add_argument('-r', '--db_rebuild', action="store_true", help='Rebuilds database')
 	return parser.parse_args()
+
+def get_config():
+	config = {}
+
+	with open('config.json') as config_file:
+		config = json.load(config_file)
+
+	return config
 
 def count_file_lines(file_name):
 	i = 0
@@ -106,11 +111,13 @@ print '======================\n'
 
 arguments = get_arguments()
 
+config = get_config()
+
 db = db_setup(
-	arguments.db_host,
-	arguments.db_user,
-	arguments.db_password,
-	arguments.db_name,
+	config['db_host'],
+	config['db_user'],
+	config['db_password'],
+	config['db_name'],
 	arguments.db_rebuild
 )
 
