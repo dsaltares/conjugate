@@ -3,7 +3,7 @@ import argparse
 import os
 import urllib2
 import urllib
-import verbix_scrapper
+import verbix_scraper
 import verbs_db
 
 def get_arguments():
@@ -50,7 +50,7 @@ def commit_verb_info(db, language, verb_info):
 
 
 def scrape_verb(language, word, db):
-	scrapper = verbix_scrapper.VerbixScrapper()
+	scrapper = verbix_scraper.VerbixScraper()
 
 	print 'Checking whether %s is a verb in %s' % (word, language)
 

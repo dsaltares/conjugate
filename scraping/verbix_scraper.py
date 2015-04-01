@@ -4,7 +4,7 @@ import socket
 import time
 import verbix_parser
 
-class VerbixScrapper:
+class VerbixScraper:
 
 	__languages = {
 		'ro': 5,
@@ -29,13 +29,13 @@ class VerbixScrapper:
 			return
 
 		parser = verbix_parser.VerbixParser()
-		return parser.get_infinitive(VerbixScrapper.__languages[language], response.read())
+		return parser.get_infinitive(VerbixScraper.__languages[language], response.read())
 
 	def get_verb_info(self, language, verb):
 		base_url = 'http://www.verbix.com/webverbix/go.php'
 		params = {
 			'T1': verb,
-			'D1': VerbixScrapper.__languages[language]
+			'D1': VerbixScraper.__languages[language]
 		}
 
 		response = self.__request(self.__get, base_url, params)
@@ -50,14 +50,14 @@ class VerbixScrapper:
 	def __request(self, make_request, url, params):
 		num_attempts = 0
 
-		while num_attempts < VerbixScrapper.__retries:
+		while num_attempts < VerbixScraper.__retries:
 			try:
 				(success, response) = make_request(url, params)
 
 				if success:
 					return response
 				else:
-					print 'Request %d/%d failed' % (num_attempts + 1, VerbixScrapper.__retries)
+					print 'Request %d/%d failed' % (num_attempts + 1, VerbixScraper.__retries)
 					num_attempts += 1
 					time.sleep(2)
 
