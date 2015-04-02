@@ -1,5 +1,6 @@
 import urllib2
 import urllib
+import httplib
 import socket
 import time
 import verbix_parser
@@ -28,8 +29,10 @@ class VerbixScraper:
 		if response is None:
 			return
 
+		content = self.__get_response_content(response)
+
 		parser = verbix_parser.VerbixParser()
-		return parser.get_infinitive(VerbixScraper.__languages[language], response.read())
+		return parser.get_infinitive(VerbixScraper.__languages[language], content)
 
 	def get_verb_info(self, language, verb):
 		base_url = 'http://www.verbix.com/webverbix/go.php'
@@ -43,9 +46,16 @@ class VerbixScraper:
 		if response is None:
 			return
 
-		parser = verbix_parser.VerbixParser()
-		return parser.parse(response.read())
+		content = self.__get_response_content(response)
 
+		parser = verbix_parser.VerbixParser()
+		return parser.parse(content)
+
+	def __get_response_content(self, response):
+		try:
+			return response.read()
+		except httplib.IncompleteRead as e:
+			return e.partial
 
 	def __request(self, make_request, url, params):
 		num_attempts = 0
