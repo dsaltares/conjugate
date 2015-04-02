@@ -106,8 +106,8 @@ def scrape_all_verbs(language, dictionary, db):
 			word = cleanse_word(word)
 			scrape_verb(language, word, db)
 
-print '\nVERBIX TO DB SCRAPPING'
-print '======================\n'
+print '\nVERBIX TO DB SCRAPING'
+print '=====================\n'
 
 arguments = get_arguments()
 
