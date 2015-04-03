@@ -29,7 +29,7 @@ First, take a look at the `config.json` file and set the parameters to match you
 Then run `python scrape_verbix.py`.
 
 ```
-usage: scrape_verbix.py [-h] [-r] language dictionary
+usage: scrape_verbix.py [-h] [-d] [-r] language dictionary
 
 positional arguments:
   language          Language code
@@ -37,7 +37,8 @@ positional arguments:
 
 optional arguments:
   -h, --help        show this help message and exit
-  -r, --db_rebuild  Rebuilds database
+  -d, --db_rebuild  Rebuilds database
+  -r, --resume      Resumes process using log file
 ```
 
 The `language` argument expects a typical language code such as `"es"` (Spanish) or `"ro"` (Romanian). The scraper needs a list of words in the target language to check if they are verbs through Verbix, hence the `dictionary` argument. The dictionary is meant to be a plain text file with one word per line.

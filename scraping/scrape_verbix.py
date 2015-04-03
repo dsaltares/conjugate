@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import json
 import argparse
 import os
@@ -5,6 +7,8 @@ import urllib2
 import urllib
 import json
 import logging
+import codecs
+import re
 import verbix_scraper
 import progressbar as pbar
 import verbs_db
@@ -13,7 +17,8 @@ def get_arguments():
 	parser = argparse.ArgumentParser()
 	parser.add_argument('language', help='Language code')
 	parser.add_argument('dictionary', help='File with the list of words to retrieve')
-	parser.add_argument('-r', '--db_rebuild', action="store_true", help='Rebuilds database')
+	parser.add_argument('-d', '--db_rebuild', action="store_true", help='Rebuilds database')
+	parser.add_argument('-r', '--resume', action="store_true", help='Resumes process using log file')
 	return parser.parse_args()
 
 def get_config():
@@ -100,17 +105,11 @@ def db_setup(db_host, db_user, db_password, db_name, db_rebuild):
 
 	return db
 
-def prepare_logging(file_name):
+def reset_logging(file_name):
 	try:
 		os.remove(file_name)
 	except Exception:
 		pass
-
-	logging.basicConfig(
-		filename=file_name,
-		format='%(levelname)s: %(asctime)s: %(message)s',
-		level=logging.DEBUG
-	)
 
 def create_progress_bar(max_value):
 	return pbar.ProgressBar(
@@ -122,8 +121,37 @@ def create_progress_bar(max_value):
 		maxval=max_value
 	).start()
 
-def scrape_all_verbs(language, dictionary, db):
-	num_words = count_file_lines(dictionary)
+def get_last_word(file_name):
+	with codecs.open(file_name, encoding='utf-8') as log_file:
+		for line in reversed(log_file.readlines()):
+			pattern = re.compile('.*Checking whether\s(?P<verb>.*?)\sis a verb')
+			match = pattern.match(line)
+
+			if match:
+				return match.group('verb')
+
+
+def line_for_word(word, file_name):
+	line_number = 0
+
+	with codecs.open(file_name, encoding='utf-8') as word_file:
+		for line in word_file:
+			if word == cleanse_word(line):
+				return line_number
+			line_number += 1
+			
+	return 0	
+
+def scrape_all_verbs(language, dictionary, db, log_file, resume):
+	start_line = 0
+
+	if resume:
+		last_word = get_last_word(log_file)	
+		start_line = line_for_word(last_word, dictionary)
+
+	reset_logging(log_file)
+
+	num_words = count_file_lines(dictionary) - start_line
 	logging.info('Scrapping %d words' % num_words)
 
 	progressbar = create_progress_bar(num_words)
@@ -131,10 +159,14 @@ def scrape_all_verbs(language, dictionary, db):
 
 	with open(dictionary, 'r') as dictionary_file:
 		for word in dictionary_file:
+			current_word += 1
+
+			if start_line >= current_word:
+				continue
+
 			word = cleanse_word(word)
 			scrape_verb(language, word, db)
-			current_word += 1
-			progressbar.update(current_word)
+			progressbar.update(current_word - start_line)
 
 	progressbar.finish()
 
@@ -145,7 +177,11 @@ arguments = get_arguments()
 
 config = get_config()
 
-prepare_logging(config['log_file'])
+logging.basicConfig(
+		filename=config['log_file'],
+		format='%(levelname)s: %(asctime)s: %(message)s',
+		level=logging.DEBUG
+	)
 
 db = db_setup(
 	config['db_host'],
@@ -158,7 +194,9 @@ db = db_setup(
 scrape_all_verbs(
 	arguments.language,
 	arguments.dictionary,
-	db
+	db,
+	config['log_file'],
+	arguments.resume
 )
 				 
 print 'Done!\n'
