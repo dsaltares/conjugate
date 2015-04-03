@@ -2,5 +2,6 @@
 	"db_host": "localhost",
 	"db_user": "root",
 	"db_password": "",
-	"db_name": "verbs"
+	"db_name": "verbs",
+	"log_file": "scrape_verbix.log"
 }

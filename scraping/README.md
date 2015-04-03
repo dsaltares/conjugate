@@ -10,6 +10,7 @@ Conjugate uses [Verbix](http://www.verbix.com/) online verb conjugator as a data
 * [BeautifulSoup 4](http://www.crummy.com/software/BeautifulSoup/)
 * [html5lib](https://pypi.python.org/pypi/html5lib)
 * [MySQLdb](https://pypi.python.org/pypi/MySQL-python)
+* [progressbar](https://pypi.python.org/pypi/progressbar/2.2)
 
 ### Running the script
 
@@ -20,7 +21,8 @@ First, take a look at the `config.json` file and set the parameters to match you
 	"db_host": "localhost",
 	"db_user": "root",
 	"db_password": "",
-	"db_name": "verbs"
+	"db_name": "verbs",
+	"log_file": "scrape_verbix.log"
 }
 ```
 

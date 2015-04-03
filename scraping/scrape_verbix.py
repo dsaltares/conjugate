@@ -4,7 +4,9 @@ import os
 import urllib2
 import urllib
 import json
+import logging
 import verbix_scraper
+import progressbar as pbar
 import verbs_db
 
 def get_arguments():
@@ -43,12 +45,12 @@ def commit_verb_info(db, language, verb_info):
 	verb = verb_info['name']
 
 	if db.insert_verb(language, verb, verb_data_json) is False:
-		print 'Failed to get insert %s in db' % verb
+		logging.error('Failed to get insert %s in db' % verb)
 		return False
 
 	for meaning in verb_info['meanings']:
 		if db.insert_translation(language, verb, meaning['eng'], meaning['description']) is False:
-			print 'Failed to get insert translation for %s in db' % verb
+			logging.error('Failed to get insert translation for %s in db' % verb)
 			return False
 
 	return True
@@ -57,7 +59,7 @@ def commit_verb_info(db, language, verb_info):
 def scrape_verb(language, word, db):
 	scrapper = verbix_scraper.VerbixScraper()
 
-	print 'Checking whether %s is a verb in %s' % (word, language)
+	logging.info('Checking whether %s is a verb in %s' % (word, language))
 
 	verb = scrapper.get_infinitive(language, word)
 
@@ -67,44 +69,74 @@ def scrape_verb(language, word, db):
 	db_verb = db.get_verb(language, verb)
 
 	if db_verb is not None:
-		print 'Verb %s is already in the db' % verb
+		logging.info('Verb %s is already in the db' % verb)
 		return
 
-	print 'Attempting to retrieve verb info for %s' % verb
+	logging.info('Attempting to retrieve verb info for %s' % verb)
 
 	verb_info = scrapper.get_verb_info(language, verb)
 
-	print 'Storing verb %s in database' % verb
+	logging.info('Storing verb %s in database' % verb)
 
 	if verb_info is None:
-		print 'Failed to get verb info for %s' % verb
+		logging.error('Failed to get verb info for %s' % verb)
 		return
 
 	if commit_verb_info(db, language, verb_info) is True:
-		print 'Successfully added verb info for %s' % verb
+		logging.info('Successfully added verb info for %s' % verb)
 
 		
 def cleanse_word(word):
 	return word.replace('\n', '')
 
 def db_setup(db_host, db_user, db_password, db_name, db_rebuild):
-	print 'Connecting to database'
+	logging.info('Connecting to database')
 
 	db = verbs_db.VerbsDB(db_host, db_user, db_password, db_name)
 
 	if db_rebuild:
-		print 'Rebuilding database'
+		logging.info('Rebuilding database')
 		db.build()
 
 	return db
 
+def prepare_logging(file_name):
+	try:
+		os.remove(file_name)
+	except Exception:
+		pass
+
+	logging.basicConfig(
+		filename=file_name,
+		format='%(levelname)s: %(asctime)s: %(message)s',
+		level=logging.DEBUG
+	)
+
+def create_progress_bar(max_value):
+	return pbar.ProgressBar(
+		widgets=[
+			pbar.Percentage(),
+			pbar.Bar(),
+			pbar.FormatLabel('Processed: %(value)d/{0} words (in: %(elapsed)s)'.format(max_value))
+		],
+		maxval=max_value
+	).start()
+
 def scrape_all_verbs(language, dictionary, db):
-	print 'Scrapping %d words' % count_file_lines(dictionary)
+	num_words = count_file_lines(dictionary)
+	logging.info('Scrapping %d words' % num_words)
+
+	progressbar = create_progress_bar(num_words)
+	current_word = 0
 
 	with open(dictionary, 'r') as dictionary_file:
 		for word in dictionary_file:
 			word = cleanse_word(word)
 			scrape_verb(language, word, db)
+			current_word += 1
+			progressbar.update(current_word)
+
+	progressbar.finish()
 
 print '\nVERBIX TO DB SCRAPING'
 print '=====================\n'
@@ -112,6 +144,8 @@ print '=====================\n'
 arguments = get_arguments()
 
 config = get_config()
+
+prepare_logging(config['log_file'])
 
 db = db_setup(
 	config['db_host'],
@@ -127,3 +161,4 @@ scrape_all_verbs(
 	db
 )
 				 
+print 'Done!\n'

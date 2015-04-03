@@ -3,6 +3,7 @@ import urllib
 import httplib
 import socket
 import time
+import logging
 import verbix_parser
 
 class VerbixScraper:
@@ -67,13 +68,15 @@ class VerbixScraper:
 				if success:
 					return response
 				else:
-					print 'Request %d/%d failed' % (num_attempts + 1, VerbixScraper.__retries)
+					logging.warning('Request %d/%d failed' % (num_attempts + 1, VerbixScraper.__retries))
 					num_attempts += 1
 					time.sleep(2)
 
 			except UnicodeEncodeError:
-				print 'Could not encode parameters'
+				logging.error('Could not encode parameters')
 				return None
+
+		logging.error('Too many attempts, giving up')
 			
 
 	def __post(self, url, params):

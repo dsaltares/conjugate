@@ -1,3 +1,4 @@
+import logging
 from bs4 import BeautifulSoup
 
 class VerbixParser:
@@ -8,7 +9,7 @@ class VerbixParser:
 
 			return translation
 		except Exception as e:
-			print 'Error parsing document: ', e
+			logging.error('Error parsing document: {0}'.format(e.strerror))
 
 	def get_infinitive(self, language, document):
 		soup = BeautifulSoup(document, 'html5')
@@ -64,7 +65,7 @@ class VerbixParser:
 				'tenses': self.__get_tenses(mode_element)
 			}
 		except Exception as e:
-			print 'Error processing mode: ', e
+			logging.error('Error processing mode: {0}'.format(e.strerror))
 
 	def __get_mode_name(self, mode_element):
 		return self.__process_str(mode_element.h3.get_text())
@@ -108,7 +109,7 @@ class VerbixParser:
 						
 						current_tense['conjugations'][-1]['options'].append(option)
 			except Exception as e:
-				print 'Error processing block: ', e
+				logging.error('Error processing block: {0}'.format(e.strerror))
 
 		return [tense for tense in tenses if len(tense['conjugations']) > 0]
 

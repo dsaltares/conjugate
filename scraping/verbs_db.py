@@ -1,5 +1,5 @@
 import MySQLdb as mdb
-import traceback
+import logging
 
 class VerbsDB:
 	def __init__(self, host, user, password, database):
@@ -40,7 +40,7 @@ class VerbsDB:
 			cur.close()
 				
 		except Exception as e:
-			traceback.print_exc()
+			logging.error(u'Failed to build database: {0}'.format(str(e)))
 			return False
 		
 		return True
@@ -53,7 +53,7 @@ class VerbsDB:
 			self.__con.commit()
 			cur.close()
 		except Exception as e:
-			traceback.print_exc()
+			logging.error(u'Failed to drop database tables: {0}'.format(str(e)))
 			return False
 		
 		return True
@@ -81,7 +81,7 @@ class VerbsDB:
 
 			return conjugations
 		except Exception as e:
-			traceback.print_exc()
+			logging.error(u'Failed to get verb %s from database: %s' % (verb, str(e)))
 
 	def get_verbs(self, lang):
 		try:
@@ -97,7 +97,7 @@ class VerbsDB:
 			return verbs
 
 		except Exception as e:
-			traceback.print_exc()
+			logging.error(u'Failed to get verbs from database: %s' % (str(e)))
 
 	def insert_translation(self, lang, verb, english, description):
 		return (
@@ -117,7 +117,7 @@ class VerbsDB:
 		except mdb.IntegrityError:
 			return False
 		except Exception as e:
-			traceback.print_exc()
+			logging.error(u'Failed to insert verb %s into database: %s' % (verb, str(e)))
 			return False
 		
 		return True
@@ -132,7 +132,7 @@ class VerbsDB:
 			self.__con.commit()
 			cur.close()
 		except Exception as e:
-			traceback.print_exc()
+			logging.error(u'Failed to update verb %s in database: %s' % (verb, str(e)))
 			return False
 		
 		return True
@@ -149,7 +149,7 @@ class VerbsDB:
 		except mdb.IntegrityError:
 			return False
 		except Exception as e:
-			traceback.print_exc()
+			logging.error(u'Failed to insert translation for %s into database: %s' % (verb, str(e)))
 			return False
 		
 		return True
@@ -164,7 +164,7 @@ class VerbsDB:
 			self.__con.commit()
 			cur.close()
 		except Exception as e:
-			traceback.print_exc()
+			logging.error(u'Failed to update translations for %s in database: %s' % (verb, str(e)))
 			return False
 		
 		return True
