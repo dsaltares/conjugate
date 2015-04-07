@@ -65,7 +65,7 @@ class VerbixScraper:
 
 		while num_attempts < VerbixScraper.__retries:
 			try:
-				(success, response) = make_request(url, params)
+				(success, response) = self.__try_request(make_request, url, params)
 
 				if success:
 					return response
@@ -79,19 +79,18 @@ class VerbixScraper:
 				return None
 
 		logging.error('Too many attempts, giving up')
-			
+	
+	def __try_request(self, make_request, url, params):
+		try:
+			return make_request(url, params)
+		except (socket.error,httplib.BadStatusLine):
+			return (False, None)
 
 	def __post(self, url, params):
-		try:
-			request = urllib2.Request(url, urllib.urlencode(params))
-			response = urllib2.urlopen(request)
-			return (True, response)
-		except socket.error:
-			return (False, None)
+		request = urllib2.Request(url, urllib.urlencode(params))
+		response = urllib2.urlopen(request)
+		return (True, response)
 
 	def __get(self, url, params):
-		try:
-			response = urllib2.urlopen('%s?%s' % (url, urllib.urlencode(params)))
-			return (True, response)
-		except socket.error:
-			return (False, None)
+		response = urllib2.urlopen('%s?%s' % (url, urllib.urlencode(params)))
+		return (True, response)
