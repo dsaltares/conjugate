@@ -1,10 +1,7 @@
 # -*- coding: utf-8 -*-
 
-import json
 import argparse
 import os
-import urllib2
-import urllib
 import json
 import logging
 import codecs
