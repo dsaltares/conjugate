@@ -11,7 +11,7 @@ class VerbixParser:
 
 			return translation
 		except Exception as e:
-			logging.error('Error parsing document: {0}'.format(e.strerror))
+			logging.error('Error parsing document:\n{0}'.format(str(e)))
 
 	def get_infinitive(self, language, document):
 		soup = BeautifulSoup(document, 'html5')
@@ -53,8 +53,11 @@ class VerbixParser:
 		start_tag = '<!-- #BeginEditable "Full_width_text" -->'
 		end_tag = '<!-- #EndEditable -->'
 
-		start_idx = document.rindex(start_tag)
-		end_idx = document.index(end_tag)
+		start_idx = document.rfind(start_tag)
+		end_idx = document.find(end_tag)
+
+		if start_idx == -1 or end_idx == -1:
+			return document
 
 		document = document[start_idx:end_idx].replace('<br>', '').replace('\n', '')
 
