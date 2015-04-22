@@ -177,7 +177,7 @@ config = get_config()
 logging.basicConfig(
 		filename=config['log_file'],
 		format='%(levelname)s: %(asctime)s: %(message)s',
-		level=logging.DEBUG
+		level=getattr(logging, config.get('log_level', 'DEBUG').upper(), None)
 	)
 
 db = db_setup(
