@@ -11,7 +11,7 @@ class VerbixParser:
 
             return translation
         except Exception as e:
-            logging.error('Error parsing document:\n{0}'.format(str(e)))
+            logging.error('Error parsing document:\n{0}'.format(e.message))
 
     def get_infinitive(self, language, document):
         soup = BeautifulSoup(document, 'html5')
@@ -50,18 +50,28 @@ class VerbixParser:
         return [self.__get_mode(mode) for mode in modes if mode is not None]
 
     def __cleanse_document(self, document):
-        start_tag = '<!-- #BeginEditable "Full_width_text" -->'
-        end_tag = '<!-- #EndEditable -->'
+        tags = [
+            {
+                'start': '<!-- #BeginEditable "Full_width_text" -->',
+                'end': '<!-- #EndEditable -->'
+            },
+            {
+                'start': '<!-- InstanceBeginEditable name="Full_width_text" -->',
+                'end': '<!-- InstanceEndEditable -->'
+            }
+        ]
 
-        start_idx = document.rfind(start_tag)
-        end_idx = document.find(end_tag)
+        for tag_pair in tags:
+            start_idx = document.rfind(tag_pair['start'])
+            end_idx = document.find(tag_pair['end'])
 
-        if start_idx == -1 or end_idx == -1:
-            return document
+            if start_idx == -1 or end_idx == -1:
+                continue
 
-        document = document[start_idx:end_idx].replace('<br>', '').replace('\n', '')
+            document = document[start_idx:end_idx].replace('<br>', '').replace('\n', '')
+            return '<html><body><div>' + document + '</div></body></html>'
 
-        return '<html><body><div>' + document + '</div></body></html>'
+        return document
 
     def __get_mode(self, mode_element):
         try:
@@ -70,7 +80,7 @@ class VerbixParser:
                 'tenses': self.__get_tenses(mode_element)
             }
         except Exception as e:
-            logging.error('Error processing mode: {0}'.format(e.strerror))
+            logging.error('Error processing mode: {0}'.format(e.message))
 
     def __get_mode_name(self, mode_element):
         return self.__process_str(mode_element.h3.get_text())
@@ -86,10 +96,10 @@ class VerbixParser:
                         continue
 
                     if element.name == 'b':
-                        tense_name = self.__process_str(element.string)
+                        tense_name = self.__process_str(element.text)
                         current_tense = self.__create_tense(tense_name)
                         tenses.append(current_tense)
-                    elif element.name == 'font':
+                    elif element.name == 'font' and element.span and element.span.string:
                         pronoun = self.__process_str(element.span.string)
 
                         if current_tense is None:
@@ -114,7 +124,7 @@ class VerbixParser:
 
                         current_tense['conjugations'][-1]['options'].append(option)
             except Exception as e:
-                logging.error('Error processing block: {0}'.format(e.strerror))
+                logging.error('Error processing block: {0}'.format(e.message))
 
         return [tense for tense in tenses if len(tense['conjugations']) > 0]
 
