@@ -21,8 +21,7 @@ Conjugate tries to solve that use case.
 ### Components
 
 * [Verbix Scraper](https://github.com/siondream/conjugate/tree/master/scraping)
-* Conjugations service: to be implemented.
-* Web application: to be implemented.
+* [Web application](https://github.com/saltares/conjugate/tree/master/site)
 
 ### Report issues
 
