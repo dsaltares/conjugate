@@ -8,33 +8,48 @@
 <title>Conjugate</title>
 
 <div class="container">
-    <div class="row ">
+    <div class="row">
         <div class="col l6 offset-l3">
             <div class="row">
-                <input id="verb" type="text" />
-                <label for="verb">Verb</label>
-            </div>
-            <div class="row">
-                <div class="input-field">
-                    <select id="lang" name="language">
-                        <option value="es">Spanish</option>
-                        <option value="ro" selected="selected">Romanian</option>
-                    </select>
+                <div id="title" class="card-panel">
+                    <div class="row">
+                        <div class="col">
+                            <h3>Conjugate</h3>
+                        </div>
+                        <div class="col">
+                            <div class="valign-wrapper">
+                                <h5 class="valign">The verb conjugator service</h5>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <input id="verb" type="text"/>
+                        <label for="verb">Verb</label>
+                    </div>
+                    <div class="row">
+                        <div class="input-field">
+                            <select id="lang" name="language">
+                                <option value="es">Spanish</option>
+                                <option value="ro" selected="selected">Romanian</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col offset-l6">
+                            <button
+                                    id="btnConjugate"
+                                    class="btn waves-effect waves-light"
+                                    type="submit"
+                                    name="action">
+                                Conjugate
+                                <i class="mdi-content-send right"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="divider"></div>
+                    <div id="conjugations" class="row">
+                    </div>
                 </div>
-            </div>
-            <div class="row">
-                <div class="col offset-l6">
-                    <button
-                            id="btnConjugate"
-                            class="btn waves-effect waves-light"
-                            type="submit"
-                            name="action">
-                        Conjugate
-                        <i class="mdi-content-send right"></i>
-                    </button>
-                </div>
-            </div>
-            <div id="conjugations" class="row">
             </div>
         </div>
     </div>
