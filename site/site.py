@@ -3,6 +3,8 @@ import json
 from flask import Flask
 from flask import request
 from flask import jsonify
+from flask import render_template
+from flask import send_from_directory
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -27,13 +29,17 @@ Session = sessionmaker(bind=engine)
 session = Session()
 
 @app.route('/')
-def hello_world():
-    return 'Hello World!'
+def index():
+    return render_template('index.html')
 
-@app.route('/conjugate', methods=['GET'])
+@app.route('/js/<path:path>')
+def send_js(path):
+    return send_from_directory('js', path)
+
+@app.route('/conjugate', methods=['POST'])
 def conjugate():
-    lang = request.args.get('lang')
-    verb = request.args.get('verb')
+    lang = request.form['lang']
+    verb = request.form['verb']
 
     for entry in session.query(Verb).filter_by(lang=lang, verb=verb):
         deserialized = json.JSONDecoder('latin-1').decode(entry.conjugations)
