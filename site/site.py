@@ -24,7 +24,7 @@ engine_config = (
     config['db_name']
 )
 
-engine = create_engine('%s://%s:%s@%s/%s' % engine_config, echo=True)
+engine = create_engine('%s://%s:%s@%s/%s?charset=utf8&use_unicode=0' % engine_config, echo=True)
 Session = sessionmaker(bind=engine)
 session = Session()
 
@@ -42,7 +42,7 @@ def conjugate():
     verb = request.form['verb']
 
     for entry in session.query(Verb).filter_by(lang=lang, verb=verb):
-        deserialized = json.JSONDecoder('latin-1').decode(entry.conjugations)
+        deserialized = json.JSONDecoder('utf-8').decode(entry.conjugations)
         return jsonify(conjugations=deserialized)
 
     return jsonify(conjugations={})
