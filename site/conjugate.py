@@ -13,8 +13,8 @@ from mappings.translation import Translation
 
 from config import config
 
-app = Flask(__name__)
-app.debug = True
+application = Flask(__name__)
+application.debug = config['debug']
 
 engine_config = (
     config['db_engine'],
@@ -28,15 +28,15 @@ engine = create_engine('%s://%s:%s@%s/%s?charset=utf8&use_unicode=0' % engine_co
 Session = sessionmaker(bind=engine)
 session = Session()
 
-@app.route('/')
+@application.route('/')
 def index():
     return render_template('index.html')
 
-@app.route('/js/<path:path>')
+@application.route('/js/<path:path>')
 def send_js(path):
     return send_from_directory('js', path)
 
-@app.route('/conjugate', methods=['POST'])
+@application.route('/conjugate', methods=['POST'])
 def conjugate():
     lang = request.form['lang']
     verb = request.form['verb']
@@ -47,7 +47,7 @@ def conjugate():
 
     return jsonify(conjugations={})
 
-@app.route('/translate', methods=['GET'])
+@application.route('/translate', methods=['GET'])
 def translate():
     lang = request.args.get('lang')
     english = request.args.get('english')
@@ -65,4 +65,4 @@ def translate():
     return jsonify(translations=translations)
 
 if __name__ == '__main__':
-    app.run()
+    application.run(host=config['app_host'])
