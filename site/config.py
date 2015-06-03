@@ -5,5 +5,7 @@ config = {
     'db_name': 'verbs',
     'db_host': '127.0.0.1',
     'app_host': '127.0.0.1',
-    'debug': True
+    'debug': True,
+    'url_prefix': '/'
 }
+

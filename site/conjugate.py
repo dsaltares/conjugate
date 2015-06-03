@@ -5,9 +5,11 @@ from flask import request
 from flask import jsonify
 from flask import render_template
 from flask import send_from_directory
+from flask import Blueprint
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+
 from mappings.verb import Verb
 from mappings.translation import Translation
 
@@ -28,15 +30,22 @@ engine = create_engine('%s://%s:%s@%s/%s?charset=utf8&use_unicode=0' % engine_co
 Session = sessionmaker(bind=engine)
 session = Session()
 
-@application.route('/')
+
+bp = Blueprint(
+    'bp',
+    __name__,
+    template_folder='templates'
+)
+
+@bp.route('/')
 def index():
     return render_template('index.html')
 
-@application.route('/js/<path:path>')
+@bp.route('/js/<path:path>')
 def send_js(path):
     return send_from_directory('js', path)
 
-@application.route('/conjugate', methods=['POST'])
+@bp.route('/conjugate', methods=['POST'])
 def conjugate():
     lang = request.form['lang']
     verb = request.form['verb']
@@ -47,7 +56,7 @@ def conjugate():
 
     return jsonify(conjugations={})
 
-@application.route('/translate', methods=['GET'])
+@bp.route('/translate', methods=['GET'])
 def translate():
     lang = request.args.get('lang')
     english = request.args.get('english')
@@ -63,6 +72,8 @@ def translate():
         })
 
     return jsonify(translations=translations)
+
+application.register_blueprint(bp, url_prefix=config['url_prefix'])
 
 if __name__ == '__main__':
     application.run(host=config['app_host'])
