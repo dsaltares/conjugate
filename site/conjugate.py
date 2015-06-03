@@ -16,6 +16,12 @@ from logging.handlers import RotatingFileHandler
 
 from config import config
 
+try:
+    import environment_config
+except ImportError:
+    pass
+
+
 def create_log_handler():
     formatter = logging.Formatter("[%(asctime)s] {%(pathname)s:%(lineno)d} %(levelname)s - %(message)s")
     handler = RotatingFileHandler(
