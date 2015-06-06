@@ -1,14 +1,34 @@
 # -*- coding: utf-8 -*-
 
+def load_src(name, fpath):
+    import os, imp
+    path = fpath if os.path.isabs(fpath) \
+                 else os.path.join(os.path.dirname(__file__), fpath)
+
+    return imp.load_source(name, path)
+
+load_src('verb', '../site/mappings/verb.py')
+load_src('translation', '../site/mappings/translation.py')
+
 import argparse
 import os
 import json
 import logging
 import codecs
 import re
-import verbix_scraper
 import progressbar as pbar
-import verbs_db
+from itertools import ifilter
+
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import scoped_session
+from sqlalchemy.orm.exc import NoResultFound
+
+from verb import Verb
+from translation import Translation
+
+import verbix_scraper
+
 
 def get_arguments():
     parser = argparse.ArgumentParser()
@@ -26,6 +46,33 @@ def get_config():
 
     return config
 
+def create_db_session(config, db_rebuild, language):
+    logging.info('Connecting to database')
+
+    engine_config = (
+        config['db_engine'],
+        config['db_user'],
+        config['db_password'],
+        config['db_host'],
+        config['db_name']
+    )
+
+    engine = create_engine(
+        '%s://%s:%s@%s/%s?charset=utf8&use_unicode=0' % engine_config,
+        echo=False
+    )
+
+    Session = sessionmaker(bind=engine)
+    db_session = Session()
+
+    if db_rebuild:
+        logging.info('Cleaning db for language %s' % language)
+        db_session.query(Verb).filter_by(lang=language).delete()
+        db_session.query(Translation).filter_by(lang=language).delete()
+        db_session.commit()
+
+    return db_session
+
 def count_file_lines(file_name):
     i = 0
     with open(file_name, 'r') as f:
@@ -34,7 +81,7 @@ def count_file_lines(file_name):
 
     return i
 
-def commit_verb_info(db, language, verb_info):
+def commit_verb_info(db_session, language, verb_info):
     verb_data_json = json.dumps(
         verb_info['modes'],
         sort_keys=True,
@@ -44,21 +91,42 @@ def commit_verb_info(db, language, verb_info):
         encoding='utf-8'
     ).encode('utf-8')
 
-    verb = verb_info['name']
+    verb = Verb(
+        lang=language,
+        verb=verb_info['name'],
+        conjugations=verb_data_json
+    )
 
-    if db.insert_verb(language, verb, verb_data_json) is False:
-        logging.error('Failed to get insert %s in db' % verb)
-        return False
+    db_session.add(verb)
+
+    translations = []
 
     for meaning in verb_info['meanings']:
-        if db.insert_translation(language, verb, meaning['eng'], meaning['description']) is False:
-            logging.error('Failed to get insert translation for %s in db' % verb)
-            return False
+        translation = Translation(
+            lang=language,
+            english=meaning['eng'],
+            description=meaning['description'],
+            verb=verb.verb
+        )
+        duped_translation = next(
+            (t for t in translations if t.english == translation.english),
+            None
+        )
+
+        if duped_translation:
+            duped_translation.description += ', ' + translation.description
+        else:
+            translations.append(translation)
+
+    for translation in translations:
+        db_session.add(translation)
+
+    db_session.commit()
 
     return True
 
 
-def scrape_verb(language, word, db):
+def scrape_verb(language, word, db_session):
     scrapper = verbix_scraper.VerbixScraper()
 
     logging.info('Checking whether %s is a verb in %s' % (word, language))
@@ -68,39 +136,31 @@ def scrape_verb(language, word, db):
     if verb is None:
         return
 
-    db_verb = db.get_verb(language, verb)
+    try:
+        db_verb = db_session.query(Verb).filter_by(
+            lang=language,
+            verb=verb
+        ).one()
+    except NoResultFound:
+        logging.info('Attempting to retrieve verb info for %s' % verb)
 
-    if db_verb is not None:
+        verb_info = scrapper.get_verb_info(language, verb)
+
+        logging.info('Storing verb %s in database' % verb)
+
+        if verb_info is None:
+            logging.error('Failed to get verb info for %s' % verb)
+            return
+
+        if commit_verb_info(db_session, language, verb_info) is True:
+            logging.info('Successfully added verb info for %s' % verb)
+    else:
         logging.info('Verb %s is already in the db' % verb)
         return
-
-    logging.info('Attempting to retrieve verb info for %s' % verb)
-
-    verb_info = scrapper.get_verb_info(language, verb)
-
-    logging.info('Storing verb %s in database' % verb)
-
-    if verb_info is None:
-        logging.error('Failed to get verb info for %s' % verb)
-        return
-
-    if commit_verb_info(db, language, verb_info) is True:
-        logging.info('Successfully added verb info for %s' % verb)
 
 
 def cleanse_word(word):
     return word.replace('\n', '')
-
-def db_setup(db_host, db_user, db_password, db_name, db_rebuild):
-    logging.info('Connecting to database')
-
-    db = verbs_db.VerbsDB(db_host, db_user, db_password, db_name)
-
-    if db_rebuild:
-        logging.info('Rebuilding database')
-        db.build()
-
-    return db
 
 def reset_logging(file_name):
     try:
@@ -139,7 +199,7 @@ def line_for_word(word, file_name):
 
     return 0
 
-def scrape_all_verbs(language, dictionary, db, log_file, resume):
+def scrape_all_verbs(language, dictionary, db_session, log_file, resume):
     start_line = 0
 
     if resume:
@@ -158,11 +218,13 @@ def scrape_all_verbs(language, dictionary, db, log_file, resume):
         for word in dictionary_file:
             current_word += 1
 
+            word = word.split('/')[0]
+
             if start_line >= current_word:
                 continue
 
             word = cleanse_word(word)
-            scrape_verb(language, word, db)
+            scrape_verb(language, word, db_session)
             progressbar.update(current_word - start_line)
 
     progressbar.finish()
@@ -180,18 +242,16 @@ logging.basicConfig(
         level=getattr(logging, config.get('log_level', 'DEBUG').upper(), None)
     )
 
-db = db_setup(
-    config['db_host'],
-    config['db_user'],
-    config['db_password'],
-    config['db_name'],
-    arguments.db_rebuild
+db_session = create_db_session(
+    config,
+    arguments.db_rebuild,
+    arguments.language
 )
 
 scrape_all_verbs(
     arguments.language,
     arguments.dictionary,
-    db,
+    db_session,
     config['log_file'],
     arguments.resume
 )

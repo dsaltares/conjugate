@@ -3,6 +3,7 @@
 	"db_user": "root",
 	"db_password": "",
 	"db_name": "verbs",
+	"db_engine": "mysql",
     "log_file": "scrape_verbix.log",
-    "log_level": "ERROR"
+    "log_level": "INFO"
 }

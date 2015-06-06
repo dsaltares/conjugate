@@ -23,6 +23,16 @@ Conjugate tries to solve that use case.
 * [Verbix Scraper](https://github.com/siondream/conjugate/tree/master/scraping)
 * [Web application](https://github.com/saltares/conjugate/tree/master/site)
 
+### Dependencies
+
+* Python 2.7
+* [BeautifulSoup 4](http://www.crummy.com/software/BeautifulSoup/)
+* [html5lib](https://pypi.python.org/pypi/html5lib)
+* [MySQLdb](https://pypi.python.org/pypi/MySQL-python)
+* [progressbar](https://pypi.python.org/pypi/progressbar/2.2)
+* [Flask](http://flask.pocoo.org/)
+* [sqlAlchemy](http://www.sqlalchemy.org/)
+
 ### Report issues
 
 Something not working quite as expected? Do you need a feature that has not been implemented yet? Check the [issue tracker](https://github.com/siondream/conjugate/issues) and add a new one if your problem is not already listed. Please try to provide a detailed description of your problem, including the steps to reproduce it.

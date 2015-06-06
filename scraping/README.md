@@ -4,25 +4,19 @@ Conjugate uses [Verbix](http://www.verbix.com/) online verb conjugator as a data
 
 *Disclaimer*: Verbix allows non-commercial use of their data.
 
-### Dependencies
-
-* Python 2.7
-* [BeautifulSoup 4](http://www.crummy.com/software/BeautifulSoup/)
-* [html5lib](https://pypi.python.org/pypi/html5lib)
-* [MySQLdb](https://pypi.python.org/pypi/MySQL-python)
-* [progressbar](https://pypi.python.org/pypi/progressbar/2.2)
-
 ### Running the script
 
 First, take a look at the `config.json` file and set the parameters to match your database settings.
 
 ```json
 {
-	"db_host": "localhost",
+	"db_host": "127.0.0.1",
 	"db_user": "root",
 	"db_password": "",
 	"db_name": "verbs",
-	"log_file": "scrape_verbix.log"
+	"db_engine": "mysql",
+    "log_file": "scrape_verbix.log",
+    "log_level": "INFO"
 }
 ```
 
