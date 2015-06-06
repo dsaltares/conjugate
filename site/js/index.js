@@ -14,6 +14,11 @@ $(document).ready(function(){
             translate: $('#translate').is(':checked')
         };
 
+        if (params.verb.length === 0) {
+            onNoInput();
+            return;
+        }
+
         setLoading();
 
         $.post('conjugate', params).done(onConjugationSucceeded)
@@ -124,10 +129,18 @@ $(document).ready(function(){
         return $('<p></p>').append(table);
     }
 
+    function onNoInput() {
+        setErrorMessage("Please enter a verb before looking for conjugations.");
+    }
+    
     function onConjugationFailed() {
         var errorMsg = "Sorry, we couldn't find any conjugations for that" +
             " verb. Make sure to use the infinitive.";
 
+        setErrorMessage(errorMsg);
+    }
+
+    function setErrorMessage(message) {
         var errorBlock = $('<div class="col"></div>').append(
             $('<div class="card-panel red darken-4"></div>').append(
                 $('<div class="row"></div>').append(
@@ -137,7 +150,7 @@ $(document).ready(function(){
                     $('<div class="col l10"></div>').append(
                         $('<div class="valign-wrapper"></div>').append(
                             $('<p class="valign"></p>').append(
-                                $('<span class="white-text"></span>').append(errorMsg)
+                                $('<span class="white-text"></span>').append(message)
                             )
                         )
                     )
