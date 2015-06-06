@@ -9,6 +9,8 @@ $(document).ready(function(){
 
         console.log(params);
 
+        setLoading();
+
         $.post('conjugate', params).done(onConjugationSucceeded)
                                    .fail(onConjugationFailed);
     });
@@ -136,6 +138,25 @@ $(document).ready(function(){
         );
 
         updateConjugationsContainer(errorBlock);
+    }
+
+    function setLoading() {
+        var loadingBlock = $('<div class="col l2 offset-l5"></div>').append(
+            $('<div class="row"></div>').append(
+                $('<div class="preloader-wrapper big active"></div>').append(
+                    $('<div class="spinner-layer spinner-blue-only"></div>').append(
+                        $('<div class="circle-clipper left"></div>').append(
+                            $('<div class="circle"></div>')
+                        ),
+                        $('<div class="circle-clipper right"></div>').append(
+                            $('<div class="circle"></div>')
+                        )
+                    )
+                )
+            )
+        );
+
+        updateConjugationsContainer(loadingBlock);
     }
 
     function updateConjugationsContainer(element) {
