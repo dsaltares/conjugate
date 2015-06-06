@@ -10,10 +10,9 @@ $(document).ready(function(){
     $('#btnConjugate').click(function(){
         var params = {
             lang: $('#lang').first().val(),
-            verb: $('#verb').first().val()
+            verb: $('#verb').first().val(),
+            translate: $('#translate').is(':checked')
         };
-
-        console.log(params);
 
         setLoading();
 
@@ -21,23 +20,28 @@ $(document).ready(function(){
                                    .fail(onConjugationFailed);
     });
 
-    function onTranslationSucceeded(data) {
-
+    function onConjugationSucceeded(response) {
+        if (response.verb &&
+            Array.isArray(response.verb.conjugations) &&
+            response.verb.conjugations.length > 0) {
+            processConjugations(response.verb.conjugations)
+        }
+        else if (response.verbs &&
+                 Array.isArray(response.verbs) &&
+                 response.verbs.length > 0 &&
+                 Array.isArray(response.verbs[0].conjugations) &&
+                 response.verbs[0].conjugations.length > 0) {
+            processConjugations(response.verbs[0].conjugations);
+        }
+        else{
+            onConjugationFailed();
+        }
     }
 
-    function onTranslationFailed() {
-
-    }
-
-    function onConjugationSucceeded(data) {
+    function processConjugations(conjugations) {
         var ul = $('<ul class="collapsible" data-collapsible="accordion"></ul>')
 
-        if (!Array.isArray(data.conjugations) || data.conjugations.length === 0) {
-            onConjugationFailed();
-            return;
-        }
-
-        data.conjugations.forEach(function(mode) {
+        conjugations.forEach(function(mode) {
             ul.append(createModeBlock(mode));
         });
 
@@ -62,8 +66,6 @@ $(document).ready(function(){
                 var currentName = expander.parent().text();
                 var moreClass = 'mdi-navigation-expand-more';
                 var lessClass = 'mdi-navigation-expand-less';
-
-                console.log("Current: ", currentName);
 
                 if (currentName !== mode.name || expander.hasClass(lessClass)) {
                     expander.removeClass(lessClass);
