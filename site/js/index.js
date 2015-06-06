@@ -1,6 +1,12 @@
 $(document).ready(function(){
     $('select').material_select();
 
+    $('body').keydown(function(event) {
+        if(event.keyCode === 13) {
+            $('#btnConjugate').click();
+        }
+    });
+
     $('#btnConjugate').click(function(){
         var params = {
             lang: $('#lang').first().val(),
