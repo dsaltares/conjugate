@@ -17,11 +17,9 @@ import logging
 import codecs
 import re
 import progressbar as pbar
-from itertools import ifilter
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy.orm import scoped_session
 from sqlalchemy.orm.exc import NoResultFound
 
 from verb import Verb
