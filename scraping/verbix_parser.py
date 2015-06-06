@@ -18,7 +18,7 @@ class VerbixParser:
 
         for a_element in soup.select('li > a'):
             if a_element['href'].find('D1=%s&'%language) != -1:
-                return a_element.string
+                return unicode(a_element.string).encode('utf-8')
 
     def __get_translation(self, document):
         soup = BeautifulSoup(document, 'html5')
