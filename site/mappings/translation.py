@@ -9,7 +9,7 @@ class Translation(Base):
     lang = Column(String(10), primary_key=True)
     verb = Column(String(25), primary_key=True)
     english = Column(String(25), primary_key=True)
-    description = Column(String(100))
+    description = Column(String)
 
     def __repr__(self):
         return "<Translation(lang='%s', verb='%s', english='%s'>" % (self.lang, self.verb, self.english)
