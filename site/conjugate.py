@@ -114,8 +114,6 @@ def get_english(lang, verb):
 
     translations = []
 
-
-
     try:
         for entry in session.query(Translation).filter_by(lang=lang, verb=verb):
             translations.append({
@@ -158,9 +156,8 @@ def conjugate():
         def make_verb(translation):
             return {
                 'lang': translation['lang'],
-                'english': translation['english'],
+                'translations': [translation],
                 'verb': translation['verb'],
-                'description': translation['description'],
                 'conjugations': get_conjugations(
                     translation['lang'],
                     translation['verb']
@@ -169,18 +166,22 @@ def conjugate():
 
         return jsonify(
             verbs=[make_verb(translation) \
-                   for translation in get_translations(lang, verb)]
+                   for translation in get_translations(lang, verb)],
+            fromEnglish=translate
         )
     else:
-        return jsonify(verb={
-            'lang': lang,
-            'translations': get_english(lang, verb),
-            'verb': verb,
-            'conjugations': get_conjugations(
-                lang,
-                verb
-            )
-        })
+        return jsonify(
+            verbs=[{
+                'lang': lang,
+                'translations': get_english(lang, verb),
+                'verb': verb,
+                'conjugations': get_conjugations(
+                    lang,
+                    verb
+                )
+            }],
+            fromEnglish=translate
+        )
 
 app.register_blueprint(bp, url_prefix=config['url_prefix'])
 

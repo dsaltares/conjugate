@@ -26,27 +26,21 @@ $(document).ready(function(){
     });
 
     function onConjugationSucceeded(response) {
-        if (response.verb &&
-            Array.isArray(response.verb.conjugations) &&
-            response.verb.conjugations.length > 0) {
-            processConjugations(response.verb.conjugations)
-        }
-        else if (response.verbs &&
-                 Array.isArray(response.verbs) &&
-                 response.verbs.length > 0 &&
-                 Array.isArray(response.verbs[0].conjugations) &&
-                 response.verbs[0].conjugations.length > 0) {
-            processConjugations(response.verbs[0].conjugations);
-        }
-        else{
+        console.log(response);
+
+        if (!response.verbs ||
+            !Array.isArray(response.verbs) ||
+            !response.verbs.length === 0) {
             onConjugationFailed();
         }
+
+        processConjugations(response.verbs, response.fromEnglish);
     }
 
-    function processConjugations(conjugations) {
-        var ul = $('<ul class="collapsible" data-collapsible="accordion"></ul>')
+    function processConjugations(verbs, fromEnglish) {
+        var ul = $('<ul class="collapsible" data-collapsible="accordion"></ul>');
 
-        conjugations.forEach(function(mode) {
+        verbs[0].conjugations.forEach(function(mode) {
             ul.append(createModeBlock(mode));
         });
 
@@ -132,7 +126,7 @@ $(document).ready(function(){
     function onNoInput() {
         setErrorMessage("Please enter a verb before looking for conjugations.");
     }
-    
+
     function onConjugationFailed() {
         var errorMsg = "Sorry, we couldn't find any conjugations for that" +
             " verb. Make sure to use the infinitive.";
