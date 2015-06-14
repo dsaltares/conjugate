@@ -30,25 +30,67 @@ $(document).ready(function(){
 
         if (!response.verbs ||
             !Array.isArray(response.verbs) ||
-            !response.verbs.length === 0) {
+            response.verbs.length === 0) {
             onConjugationFailed();
         }
-
-        processConjugations(response.verbs, response.fromEnglish);
+        else {
+            processVerbs(response.verbs, response.fromEnglish);
+        }
     }
 
-    function processConjugations(verbs, fromEnglish) {
+    function processVerbs(verbs, fromEnglish) {
+        if (fromEnglish) {
+            var col = $('<div class="col s12"></div>');
+            var tabSize = Math.min(12 / verbs.length, 3);
+            var tabClass = '"tab col s' + tabSize + '"';
+            var tabs = $('<ul class="tabs"></ul>');
+
+            verbs.forEach(function(verb, index) {
+                var href = '"#verb' + index + '"';
+                var aClass = index === 0 ? '"active"' : '""';
+                var link =  $('<a class=' + aClass + ' href=' + href + '></a>');
+
+                link.append(verb.verb);
+
+                tabs.append(
+                    $('<li class=' + tabClass + '></li>').append(
+                        link
+                    )
+                );
+
+                link.click(function() {
+                   enableCollapsible();
+                });
+            });
+
+            col.append(tabs);
+
+            updateConjugationsContainer(col);
+
+            verbs.forEach(function(verb, index) {
+                var id = '"verb' + index + '"';
+                $('#conjugations').append(
+                    $('<div class="col s12" id=' + id + '></div>').append(
+                        processConjugations(verb.conjugations)
+                    )
+                );
+            });
+
+        }
+        else {
+            var conjugationsList = processConjugations(verbs[0].conjugations);
+            updateConjugationsContainer(conjugationsList);
+        }
+    }
+
+    function processConjugations(conjugations) {
         var ul = $('<ul class="collapsible" data-collapsible="accordion"></ul>');
 
-        verbs[0].conjugations.forEach(function(mode) {
+        conjugations.forEach(function(mode) {
             ul.append(createModeBlock(mode));
         });
 
-        updateConjugationsContainer(ul);
-
-        $('.collapsible').collapsible({
-            accordion: false
-        });
+        return ul;
     }
 
     function createModeBlock(mode) {
@@ -179,6 +221,15 @@ $(document).ready(function(){
         conjugationsContainer.empty();
         element.css('display', 'none');
         element.appendTo(conjugationsContainer).fadeIn('slow');
+
+        enableCollapsible();
+
+        $('ul.tabs').tabs();
     }
 
+    function enableCollapsible() {
+        $('.collapsible').collapsible({
+            accordion: false
+        });
+    }
 });
