@@ -170,15 +170,19 @@ def conjugate():
             fromEnglish=translate
         )
     else:
+        conjugations = get_conjugations(lang, verb)
+
+        if len(conjugations) == 0:
+            return jsonify(verbs=[])
+
+        translations = get_english(lang, verb)
+
         return jsonify(
             verbs=[{
                 'lang': lang,
-                'translations': get_english(lang, verb),
+                'translations': translations,
                 'verb': verb,
-                'conjugations': get_conjugations(
-                    lang,
-                    verb
-                )
+                'conjugations': conjugations
             }],
             fromEnglish=translate
         )
