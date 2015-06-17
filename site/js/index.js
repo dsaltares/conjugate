@@ -50,9 +50,31 @@ $(document).ready(function(){
                                    .fail(onConjugationFailed);
     });
 
-    function onConjugationSucceeded(response) {
-        console.log(response);
+    function setupFromCookie() {
+        var lang = cookie.getValue('lang');
+        var verb = cookie.getValue('verb');
+        var translate = cookie.getValue('translate');
 
+        if (lang) {
+            $('#lang').val(lang);
+        }
+
+        if (verb) {
+            $('#verb').val(verb);
+        }
+
+        if (translate === 'true') {
+            $('#translate').prop('checked', true);
+        }
+    }
+
+    function saveToCookie(params) {
+        cookie.setValue('lang', params.lang);
+        cookie.setValue('verb', params.verb);
+        cookie.setValue('translate', params.translate);
+    }
+
+    function onConjugationSucceeded(response) {
         if (!response.verbs ||
             !Array.isArray(response.verbs) ||
             response.verbs.length === 0) {
@@ -65,15 +87,20 @@ $(document).ready(function(){
 
     function processVerbs(verbs, fromEnglish) {
         if (fromEnglish) {
+            var conjugationsBlock = $('<div></div>');
             var col = $('<div class="col s12"></div>');
             var tabSize = Math.min(12 / verbs.length, 3);
             var tabClass = '"tab col s' + tabSize + '"';
             var tabs = $('<ul class="tabs"></ul>');
 
+            verbs = verbs.filter(function(verb) {
+                return Array.isArray(verb.conjugations) &&
+                       verb.conjugations.length > 0;
+            });
+
             verbs.forEach(function(verb, index) {
                 var href = '"#verb' + index + '"';
-                var aClass = index === 0 ? '"active"' : '""';
-                var link =  $('<a class=' + aClass + ' href=' + href + '></a>');
+                var link =  $('<a href=' + href + '></a>');
 
                 link.append(verb.verb);
 
@@ -89,17 +116,18 @@ $(document).ready(function(){
             });
 
             col.append(tabs);
-
-            updateConjugationsContainer(col);
+            conjugationsBlock.append(col);
 
             verbs.forEach(function(verb, index) {
                 var id = '"verb' + index + '"';
-                $('#conjugations').append(
+                conjugationsBlock.append(
                     $('<div class="col s12" id=' + id + '></div>').append(
                         processConjugations(verb.conjugations)
                     )
                 );
             });
+
+            updateConjugationsContainer(conjugationsBlock);
 
         }
         else {
