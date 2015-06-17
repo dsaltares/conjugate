@@ -1,4 +1,27 @@
+var cookie = {
+    setValue: function(name, value, expiryDays) {
+        expiryDays = expiryDays || 10;
+        var date = new Date();
+        date.setTime(date.getTime() + (expiryDays * 24 * 60 * 60 * 1000));
+        var expires = "expires=" + date.toUTCString();
+        document.cookie = name + "=" + value + "; " + expires;
+    },
+
+    getValue: function(name) {
+        name = name + "=";
+        var ca = document.cookie.split(';');
+        for(var i = 0; i < ca.length; i++) {
+            var c = ca[i];
+            while (c.charAt(0)==' ') c = c.substring(1);
+            if (c.indexOf(name) == 0) return c.substring(name.length, c.length);
+        }
+        return "";
+    }
+};
+
 $(document).ready(function(){
+    setupFromCookie();
+
     $('select').material_select();
 
     $('body').keydown(function(event) {
@@ -13,6 +36,8 @@ $(document).ready(function(){
             verb: $('#verb').first().val(),
             translate: $('#translate').is(':checked')
         };
+
+        saveToCookie(params);
 
         if (params.verb.length === 0) {
             onNoInput();
