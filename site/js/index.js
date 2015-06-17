@@ -93,6 +93,8 @@ $(document).ready(function(){
             var tabClass = '"tab col s' + tabSize + '"';
             var tabs = $('<ul class="tabs"></ul>');
 
+            console.log(verbs);
+
             verbs = verbs.filter(function(verb) {
                 return Array.isArray(verb.conjugations) &&
                        verb.conjugations.length > 0;
@@ -122,7 +124,7 @@ $(document).ready(function(){
                 var id = '"verb' + index + '"';
                 conjugationsBlock.append(
                     $('<div class="col s12" id=' + id + '></div>').append(
-                        processConjugations(verb.conjugations)
+                        processVerb(verb)
                     )
                 );
             });
@@ -131,19 +133,34 @@ $(document).ready(function(){
 
         }
         else {
-            var conjugationsList = processConjugations(verbs[0].conjugations);
+            var conjugationsList = processVerb(verbs[0]);
             updateConjugationsContainer(conjugationsList);
         }
     }
 
-    function processConjugations(conjugations) {
-        var ul = $('<ul class="collapsible" data-collapsible="accordion"></ul>');
-
-        conjugations.forEach(function(mode) {
-            ul.append(createModeBlock(mode));
+    function processVerb(verb) {
+        var translationsList = $('<div></div>');
+        verb.translations.forEach(function(translation) {
+            translationsList.append(
+                $('<p></p>').append(
+                    translation.english + ': ' + translation.description
+                )
+            );
         });
 
-        return ul;
+        var conjugationList = $('<ul class="collapsible" data-collapsible="accordion"></ul>');
+        verb.conjugations.forEach(function(mode) {
+            conjugationList.append(createModeBlock(mode));
+        });
+
+        return $('<div></div>').append(
+            $('<div class="row"></div>').append(
+                translationsList
+            ),
+            $('<div class="row"></div>').append(
+                conjugationList
+            )
+        );
     }
 
     function createModeBlock(mode) {
