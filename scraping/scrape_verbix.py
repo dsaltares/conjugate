@@ -163,7 +163,7 @@ def scrape_verb(language, word, db_session):
 
 
 def cleanse_word(word):
-    return word.replace('\n', '')
+    return word.replace('\n', '').split('/')[0]
 
 def reset_logging(file_name):
     try:
@@ -208,6 +208,7 @@ def scrape_all_verbs(language, dictionary, db_session, log_file, resume):
     if resume:
         last_word = get_last_word(log_file)
         start_line = line_for_word(last_word, dictionary)
+        logging.info('Resuming from word %s on line %d' % (last_word, start_line))
 
     reset_logging(log_file)
 
@@ -221,7 +222,6 @@ def scrape_all_verbs(language, dictionary, db_session, log_file, resume):
         for word in dictionary_file:
             current_word += 1
 
-            word = word.split('/')[0]
 
             if start_line >= current_word:
                 continue
