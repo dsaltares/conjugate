@@ -21,6 +21,7 @@ import progressbar as pbar
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm.exc import NoResultFound
+from sqlalchemy.exc import IntegrityError
 
 from verb import Verb
 from translation import Translation
@@ -116,10 +117,14 @@ def commit_verb_info(db_session, language, verb_info):
         else:
             translations.append(translation)
 
-    for translation in translations:
-        db_session.add(translation)
+    try:
+        for translation in translations:
+            db_session.add(translation)
 
-    db_session.commit()
+        db_session.commit()
+    except IntegrityError:
+        db_session.rollback()
+        logging.error('Translations already exist %s' % str(translations))
 
     return True
 
