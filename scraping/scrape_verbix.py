@@ -137,7 +137,7 @@ def scrape_verb(language, word, db_session):
     verb = scrapper.get_infinitive(language, word)
 
     if verb is None:
-        return
+        return True
 
     try:
         db_verb = db_session.query(Verb).filter_by(
@@ -159,7 +159,8 @@ def scrape_verb(language, word, db_session):
             logging.info('Successfully added verb info for %s' % verb)
     else:
         logging.info('Verb %s is already in the db' % verb)
-        return
+
+    return True
 
 
 def cleanse_word(word):
@@ -217,20 +218,39 @@ def scrape_all_verbs(language, dictionary, db_session, log_file, resume):
 
     progressbar = create_progress_bar(num_words)
     current_word = 0
+    failed_words = []
 
     with open(dictionary, 'r') as dictionary_file:
         for word in dictionary_file:
             current_word += 1
 
-
             if start_line >= current_word:
                 continue
 
             word = cleanse_word(word)
-            scrape_verb(language, word, db_session)
+            result = scrape_verb(language, word, db_session)
+
+            if not result:
+                failed_words.append(word)
+
             progressbar.update(current_word - start_line)
 
     progressbar.finish()
+
+    return {
+        'total_count': current_word,
+        'failed_words': failed_words
+    }
+
+def print_report(results):
+    num_failures = len(results['failed_words'])
+
+    print '\nReport:'
+    print 'Processed %d words' % results['total_count']
+    print 'Failed to process %d words' % num_failures
+
+    if num_failures > 0:
+        print 'List of failed words:\n%s' % '\n'.join(results['failed_words'])
 
 print '\nVERBIX TO DB SCRAPING'
 print '=====================\n'
@@ -251,7 +271,7 @@ db_session = create_db_session(
     arguments.language
 )
 
-scrape_all_verbs(
+results = scrape_all_verbs(
     arguments.language,
     arguments.dictionary,
     db_session,
@@ -259,4 +279,6 @@ scrape_all_verbs(
     arguments.resume
 )
 
-print 'Done!\n'
+print_report(results)
+
+print '\nDone!\n'
