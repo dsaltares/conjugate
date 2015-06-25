@@ -83,7 +83,7 @@ class VerbixScraper:
     def __try_request(self, make_request, url, params):
         try:
             return make_request(url, params)
-        except (socket.error,httplib.BadStatusLine):
+        except (socket.error, httplib.BadStatusLine, urllib2.HTTPError):
             return (False, None)
 
     def __get(self, url, params):
