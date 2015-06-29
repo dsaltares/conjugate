@@ -202,7 +202,7 @@ $(document).ready(function(){
     function createTenseBlock(tense) {
         //var title = $('<p></p>').append(tense.name);
 
-        var table = $('<table class="hoverable"></table>').append(
+        var table = $('<table class="hoverable responsive-table"></table>').append(
             $('<thead></thead>'),
             $('<tbody></tbody>')
         );
