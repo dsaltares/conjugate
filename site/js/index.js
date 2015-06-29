@@ -200,8 +200,6 @@ $(document).ready(function(){
     }
 
     function createTenseBlock(tense) {
-        //var title = $('<p></p>').append(tense.name);
-
         var table = $('<table class="hoverable responsive-table"></table>').append(
             $('<thead></thead>'),
             $('<tbody></tbody>')
@@ -268,7 +266,7 @@ $(document).ready(function(){
     }
 
     function setLoading() {
-        var loadingBlock = $('<div class="col l2 offset-l5"></div>').append(
+        var loadingBlock = $('<div class="col l2 offset-l5 m4 offset-m4 s6 offset-s3"></div>').append(
             $('<div class="row"></div>').append(
                 $('<div class="preloader-wrapper big active"></div>').append(
                     $('<div class="spinner-layer spinner-blue-only"></div>').append(
