@@ -88,9 +88,9 @@ $(document).ready(function(){
     function processVerbs(verbs, fromEnglish) {
         if (fromEnglish) {
             var conjugationsBlock = $('<div></div>');
-            var col = $('<div class="col s12"></div>');
+            var col = $('<div class="col s12 m12 l12"></div>');
             var tabSize = Math.min(12 / verbs.length, 3);
-            var tabClass = '"tab col s' + tabSize + '"';
+            var tabClass = '"tab col s' + tabSize + ' m' + tabSize + ' l' + tabSize + '"';
             var tabs = $('<ul class="tabs"></ul>');
 
             console.log(verbs);
@@ -123,7 +123,7 @@ $(document).ready(function(){
             verbs.forEach(function(verb, index) {
                 var id = '"verb' + index + '"';
                 conjugationsBlock.append(
-                    $('<div class="col s12" id=' + id + '></div>').append(
+                    $('<div class="col s12 m12 l12" id=' + id + '></div>').append(
                         processVerb(verb)
                     )
                 );

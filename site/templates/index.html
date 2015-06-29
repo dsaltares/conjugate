@@ -7,32 +7,32 @@
 
 <title>Conjugate</title>
 
-<div class="container">
-    <div class="row">
-        <div class="col l6 offset-l3">
-            <div class="row">
-                <!--<div id="title" class="card-panel">-->
-                    <!--<div class="row">-->
-                        <div class="col">
-                            <h3>Conjugate</h3>
-                        </div>
-                        <div class="col">
-                            <div class="valign-wrapper">
-                                <h5 class="valign">The verb conjugator service</h5>
-                            </div>
-                        </div>
+<header class="red lighten-2">
+    <div class="container">
+        <div class="row">
+            <div class="col offset-l1 offset-m1">
+                <h1 class="white-text">Conjugate</h1>
+            </div>
+        </div>
+    </div>
+</header>
+
+<main>
+    <div class="container">
+        <div class="row">
+            <div class="col l6 offset-l3 m8 offset-m2 s12">
+                <div class="row">
+                    <div class="col l8 m7 s12">
+                        <input id="verb" type="text"/>
+                        <label for="verb">Verb</label>
                     </div>
-                    <div class="row">
-                        <div class="col l6">
-                            <input id="verb" type="text"/>
-                            <label for="verb">Verb</label>
-                        </div>
-                        <div class="col l6">
-                            <input type="checkbox" id="translate" />
-                            <label for="translate">Translate from English</label>
-                        </div>
+                    <div class="col l4 m5 s12">
+                        <input type="checkbox" id="translate"/>
+                        <label for="translate">From English</label>
                     </div>
-                    <div class="row">
+                </div>
+                <div class="row">
+                    <div class="col l8 m7 s12">
                         <div class="input-field">
                             <select id="lang" name="lang">
                                 <option value="es">Spanish</option>
@@ -40,23 +40,52 @@
                             </select>
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="col offset-l6">
-                            <button
-                                    id="btnConjugate"
-                                    class="btn waves-effect waves-light"
-                                    type="submit"
-                                    name="action">
-                                Conjugate
-                                <i class="mdi-content-send right"></i>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="divider"></div>
-                    <div id="conjugations" class="row">
+                </div>
+                <div class="row">
+                    <div class="col l4 m6 s8">
+                        <button
+                                id="btnConjugate"
+                                class="btn waves-effect waves-light"
+                                type="submit"
+                                name="action">
+                            Conjugate
+                            <i class="mdi-content-send right"></i>
+                        </button>
                     </div>
                 </div>
+                <div class="row" id="conjugations">
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer class="page-footer">
+    <div class="row">
+        <!--<div class="col l2 m4 s6">-->
+            <!--<div class="card">-->
+                <!--<div class="card-image waves-effect waves-block waves-light">-->
+                    <!--<img class="activator" src="img/davidsaltares.jpg">-->
+                <!--</div>-->
+                <!--<div class="card-content">-->
+                <!--<span class="card-title activator grey-text text-darken-4">David Saltares <i-->
+                        <!--class="mdi-navigation-more-vert right"></i></span>-->
+
+                    <!--<p><a href="http://saltares.com">Check my blog!</a></p>-->
+                <!--</div>-->
+                <!--<div class="card-reveal">-->
+                <!--<span class="card-title grey-text text-darken-4">David Saltares <i-->
+                        <!--class="mdi-navigation-close right"></i></span>-->
+
+                    <!--<p>Hi! I am a Software Developer and made Conjugate in my spare time.</p>-->
+                <!--</div>-->
             <!--</div>-->
         <!--</div>-->
     </div>
-</div>
+    </div>
+    <div class="footer-copyright">
+        <div class="container">
+            © 2015 Copyright David Saltares
+        </div>
+    </div>
+</footer>
