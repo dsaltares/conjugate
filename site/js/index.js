@@ -266,17 +266,10 @@ $(document).ready(function(){
     }
 
     function setLoading() {
-        var loadingBlock = $('<div class="col l2 offset-l5 m4 offset-m4 s6 offset-s3"></div>').append(
+        var loadingBlock = $('<div class="col l8 m7 s12"></div>').append(
             $('<div class="row"></div>').append(
-                $('<div class="preloader-wrapper big active"></div>').append(
-                    $('<div class="spinner-layer spinner-blue-only"></div>').append(
-                        $('<div class="circle-clipper left"></div>').append(
-                            $('<div class="circle"></div>')
-                        ),
-                        $('<div class="circle-clipper right"></div>').append(
-                            $('<div class="circle"></div>')
-                        )
-                    )
+                $('<div class="progress"></div>').append(
+                    $('<div class="indeterminate"></div>')
                 )
             )
         );
