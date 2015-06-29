@@ -6,6 +6,7 @@ config = {
     'db_password': '',
     'db_name': 'verbs',
     'db_host': '127.0.0.1',
+    'db_reconnects': 5,
     'app_host': '127.0.0.1',
     'debug': True,
     'url_prefix': '',

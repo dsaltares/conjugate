@@ -39,7 +39,19 @@ def create_log_handler():
 
     return handler
 
+bp = Blueprint(
+    'bp',
+    __name__,
+    template_folder='templates'
+)
+
+app = Flask(__name__)
+app.debug = config['debug']
+app.logger.addHandler(create_log_handler())
+
 def create_session():
+    app.logger.info('Creating DB session')
+
     engine_config = (
         config['db_engine'],
         config['db_user'],
@@ -57,21 +69,13 @@ def create_session():
 
     return Session()
 
-
-bp = Blueprint(
-    'bp',
-    __name__,
-    template_folder='templates'
-)
-
-app = Flask(__name__)
-app.debug = config['debug']
-app.logger.addHandler(create_log_handler())
-
 session = create_session()
 
+def recreate_session():
+    global session
+    session = create_session()
 
-def get_translations(lang, english):
+def get_translations(lang, english, attempt = 0):
     app.logger.debug('Trying to translate (%s, %s)' % (lang, english))
 
     translations = []
@@ -84,15 +88,24 @@ def get_translations(lang, english):
                 'verb': entry.verb,
                 'description': entry.description
             })
+    except NoResultFound:
+        app.logger.warning('No translations found for (%s, %s)' % (lang, english))
     except:
         app.logger.error('Error querying translations for (%s, %s)\n%s' % (lang, english, traceback.format_exc()))
-        raise
+        app.logger.error('Trying to reconnect to DB, attempts remaining: %d', config['db_reconnects'] - attempt)
+
+        if attempt >= config['db_reconnects']:
+            app.logger.error('Cannot connect to DB')
+            raise
+
+        recreate_session()
+        return get_translations(lang, english, attempt + 1)
 
     app.logger.debug('%d translations found for (%s, %s)' % (len(translations), lang, english))
 
     return translations
 
-def get_conjugations(lang, verb):
+def get_conjugations(lang, verb, attempt = 0):
     app.logger.debug('Trying to conjugate (%s, %s)' % (lang, verb))
 
     conjugations = []
@@ -105,7 +118,14 @@ def get_conjugations(lang, verb):
         app.logger.warning('No conjugations found for (%s, %s)' % (lang, verb))
     except:
         app.logger.error('Error querying conjugations for (%s, %s)\n%s' % (lang, verb, traceback.format_exc()))
-        raise
+        app.logger.error('Trying to reconnect to DB, attempts remaining: %d', config['db_reconnects'] - attempt)
+
+        if attempt >= config['db_reconnects']:
+            app.logger.error('Cannot connect to DB')
+            raise
+
+        recreate_session()
+        return get_conjugations(lang, verb, attempt + 1)
 
     return conjugations
 
@@ -142,6 +162,11 @@ def index():
 def send_js(path):
     app.logger.debug('Processing rule %s' % request.url_rule)
     return send_from_directory('js', path)
+
+@bp.route('/img/<path:path>')
+def send_img(path):
+    app.logger.debug('Processing rule %s' % request.url_rule)
+    return send_from_directory('img', path)
 
 @bp.route('/conjugate', methods=['POST'])
 def conjugate():
