@@ -237,7 +237,15 @@ $(document).ready(function(){
                 tr.append($('<td></td>').append(conjugation.name));
             }
 
-            tr.append($('<td></td>').append(conjugation.options.join(', ')));
+            var span = $('<span></span>');
+
+            if (conjugation.irregular === true) {
+                span.addClass('red-text darken-3');
+            }
+
+            tr.append($('<td></td>').append(
+                span.append(conjugation.options.join(', ')))
+            );
 
             return tr;
         }));

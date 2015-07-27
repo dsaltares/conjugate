@@ -88,6 +88,7 @@ class VerbixParser:
     def __get_tenses(self, mode_element):
         tenses = []
         current_tense = None
+        current_conjugation = None
 
         for block in mode_element.select('td > p'):
             try:
@@ -108,8 +109,10 @@ class VerbixParser:
 
                         conjugation = self.__create_conjugation(pronoun)
                         current_tense['conjugations'].append(conjugation)
+                        current_conjugation = conjugation
                     elif element.name == 'span':
                         option = self.__process_str(element.string)
+                        irregular = 'irregular' in element.attrs['class']
 
                         if len(option) < 1:
                             continue
@@ -121,8 +124,15 @@ class VerbixParser:
                         if len(current_tense['conjugations']) == 0:
                             conjugation = self.__create_conjugation('')
                             current_tense['conjugations'].append(conjugation)
+                            current_conjugation = conjugation
 
-                        current_tense['conjugations'][-1]['options'].append(option)
+                        current_conjugation['options'].append(option)
+
+                        if 'irregular' in current_conjugation:
+                            current_conjugation['irregular'] = current_conjugation['irregular'] or irregular
+                        else:
+                            current_conjugation['irregular'] = irregular
+
             except Exception as e:
                 logging.error('Error processing block: {0}'.format(e.message))
 
