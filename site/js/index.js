@@ -50,6 +50,18 @@ $(document).ready(function(){
                                    .fail(onConjugationFailed);
     });
 
+    $('#lang').change(function(){
+        var lang = $('#lang').first().val();
+
+        if (lang === 'en') {
+            $('#translate').attr('checked', false);
+            $('#translate').attr('disabled', true);
+        }
+        else {
+            $('#translate').attr('disabled', false);
+        }
+    });
+
     function setupFromCookie() {
         var lang = cookie.getValue('lang');
         var verb = cookie.getValue('verb');
