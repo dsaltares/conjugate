@@ -2,7 +2,7 @@
 
 A verb conjugator service. Enter a verb in English and get the conjugations for all tenses in a variety of languages.
 
-Conjugate is available [here](http://saltares.com/conjugate).
+Conjugate is available [here](http://saltares.com/conjugate), watch a small demo at the bottom of this page.
 
 ### Motivation
 
@@ -44,3 +44,7 @@ Awesome! If you would like to contribute with a new feature or submit a bugfix, 
 ### License
 
 Conjugate is licensed under the [Apache 2 License](https://github.com/siondream/conjugate/blob/master/LICENSE), meaning you can use it free of charge, without strings attached in commercial and non-commercial projects. However, if you happen to become a millionaire thanks to it, please do buy me a beer!
+
+<h3 id="demo">Demo</h3>
+
+![conjugate demo](http://i.imgur.com/S6gkWa8.gif)
