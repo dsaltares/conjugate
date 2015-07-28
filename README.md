@@ -2,7 +2,7 @@
 
 A verb conjugator service. Enter a verb in English and get the conjugations for all tenses in a variety of languages.
 
-Merely a WIP at this point.
+Conjugate is available [here](http://saltares.com/conjugate).
 
 ### Motivation
 
