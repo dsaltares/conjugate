@@ -13,5 +13,6 @@ config = {
     'log_file': 'conjugate.log',
     'log_level': logging.DEBUG,
     'log_max_bytes': 10000000,
-    'log_backup_count': 5
+    'log_backup_count': 5,
+    'google_analytics_token': ''
 }

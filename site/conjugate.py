@@ -39,6 +39,7 @@ def create_log_handler():
 
     return handler
 
+
 bp = Blueprint(
     'bp',
     __name__,
@@ -48,6 +49,7 @@ bp = Blueprint(
 app = Flask(__name__)
 app.debug = config['debug']
 app.logger.addHandler(create_log_handler())
+
 
 def create_session():
     app.logger.info('Creating DB session')
@@ -69,13 +71,16 @@ def create_session():
 
     return Session()
 
+
 session = create_session()
+
 
 def recreate_session():
     global session
     session = create_session()
 
-def get_translations(lang, english, attempt = 0):
+
+def get_translations(lang, english, attempt=0):
     app.logger.debug('Trying to translate (%s, %s)' % (lang, english))
 
     translations = []
@@ -105,7 +110,8 @@ def get_translations(lang, english, attempt = 0):
 
     return translations
 
-def get_conjugations(lang, verb, attempt = 0):
+
+def get_conjugations(lang, verb, attempt=0):
     app.logger.debug('Trying to conjugate (%s, %s)' % (lang, verb))
 
     conjugations = []
@@ -128,6 +134,7 @@ def get_conjugations(lang, verb, attempt = 0):
         return get_conjugations(lang, verb, attempt + 1)
 
     return conjugations
+
 
 def get_english(lang, verb):
     app.logger.debug('Trying to get the English verb for (%s, %s)' % (lang, verb))
@@ -156,17 +163,23 @@ def get_english(lang, verb):
 @bp.route('/')
 def index():
     app.logger.debug('Processing rule %s' % request.url_rule)
-    return render_template('index.html')
+    return render_template(
+        'index.html',
+        google_analytics_token=config['google_analytics_token']
+    )
+
 
 @bp.route('/js/<path:path>')
 def send_js(path):
     app.logger.debug('Processing rule %s' % request.url_rule)
     return send_from_directory('js', path)
 
+
 @bp.route('/img/<path:path>')
 def send_img(path):
     app.logger.debug('Processing rule %s' % request.url_rule)
     return send_from_directory('img', path)
+
 
 @bp.route('/conjugate', methods=['POST'])
 def conjugate():
@@ -211,6 +224,7 @@ def conjugate():
             }],
             fromEnglish=translate
         )
+
 
 app.register_blueprint(bp, url_prefix=config['url_prefix'])
 
