@@ -1,9 +1,9 @@
 <!doctype html>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.96.1/css/materialize.min.css">
+
+<link type="text/css" rel="stylesheet" href="lib/materialize/css/materialize.min.css"  media="screen,projection"/>
 
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<link type="text/css" rel="stylesheet" href="lib/materialize/css/materialize.min.css"  media="screen,projection"/>
 <script src="lib/jquery/jquery.min.js"></script>
 <script src="lib/materialize/js/materialize.min.js"></script>
 <script src="js/index.js"></script>
@@ -47,8 +47,9 @@
                     <div class="col l8 m7 s12">
                         <div class="input-field">
                             <select id="lang" name="lang">
-                                <option value="es">Spanish</option>
-                                <option value="ro">Romanian</option>
+                                {% for key, value in languages.iteritems() %}
+                                    <option value="{{ key }}">{{ value }}</option>
+                                {% endfor %}
                             </select>
                         </div>
                     </div>

@@ -165,7 +165,11 @@ def index():
     app.logger.debug('Processing rule %s' % request.url_rule)
     return render_template(
         'index.html',
-        google_analytics_token=config['google_analytics_token']
+        google_analytics_token=config['google_analytics_token'],
+        languages={
+            'ro': 'Romanian',
+            'es': 'Spanish'
+        }
     )
 
 
