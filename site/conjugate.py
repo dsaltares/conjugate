@@ -174,6 +174,10 @@ def send_js(path):
     app.logger.debug('Processing rule %s' % request.url_rule)
     return send_from_directory('js', path)
 
+@bp.route('/lib/<path:path>')
+def send_lib(path):
+    app.logger.debug('Processing rule %s' % request.url_rule)
+    return send_from_directory('lib', path)
 
 @bp.route('/img/<path:path>')
 def send_img(path):
