@@ -89,7 +89,9 @@ $(document).ready(function(){
     function onConjugationSucceeded(response) {
         if (!response.verbs ||
             !Array.isArray(response.verbs) ||
-            response.verbs.length === 0) {
+            response.verbs.length === 0 ||
+            !Array.isArray(response.verbs[0].conjugations) ||
+            response.verbs[0].conjugations.length === 0) {
             onConjugationFailed();
         }
         else {
