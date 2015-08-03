@@ -124,7 +124,7 @@ def commit_verb_info(db_session, language, verb_info):
         db_session.commit()
     except IntegrityError:
         db_session.rollback()
-        logging.error('Translations already exist %s' % str(translations))
+        logging.error('Translations already exist for %s' % verb_info['name'])
 
     return True
 
