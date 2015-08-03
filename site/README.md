@@ -2,16 +2,6 @@
 
 Conjugate is a [Flask] application and deploying it is fairly easy.
 
-### Dependencies
-
-You should set a [virtual environment](http://docs.python-guide.org/en/latest/dev/virtualenvs/) with all of Conjugate's
-dependencies. That way they will not mess with your other Python applications. Now please install:
-
-* Python 2.7
-* [MySQLdb](https://pypi.python.org/pypi/MySQL-python)
-* [Flask](http://flask.pocoo.org/)
-* [sqlAlchemy](http://www.sqlalchemy.org/)
-
 ### Download Conjugate
 
 First, download the repository from GitHub:

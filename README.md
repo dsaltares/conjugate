@@ -25,13 +25,13 @@ Conjugate tries to solve that use case.
 
 ### Dependencies
 
-* Python 2.7
-* [BeautifulSoup 4](http://www.crummy.com/software/BeautifulSoup/)
-* [html5lib](https://pypi.python.org/pypi/html5lib)
-* [MySQLdb](https://pypi.python.org/pypi/MySQL-python)
-* [progressbar](https://pypi.python.org/pypi/progressbar/2.2)
-* [Flask](http://flask.pocoo.org/)
-* [sqlAlchemy](http://www.sqlalchemy.org/)
+Note that Conjugate has been tested with Python 2.7. To use either the scraper or the web application you need to install
+the dependencies. A virtual environment is recommended.
+
+```bash
+mkvirtualenv conjugate
+pip install -r dependencies.txt
+```
 
 ### Report issues
 
