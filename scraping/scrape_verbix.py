@@ -96,7 +96,12 @@ def commit_verb_info(db_session, language, verb_info):
         conjugations=verb_data_json
     )
 
-    db_session.add(verb)
+    try:
+        db_session.add(verb)
+        db_session.commit()
+    except IntegrityError:
+        db_session.rollback()
+        logging.error('Verb already in DB %s' % verb_info['name'])
 
     translations = []
 
