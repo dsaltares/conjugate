@@ -166,12 +166,8 @@ def index():
     return render_template(
         'index.html',
         google_analytics_token=config['google_analytics_token'],
-        languages={
-            'ro': 'Romanian',
-            'es': 'Spanish'
-        }
+        languages=config['languages']
     )
-
 
 @bp.route('/js/<path:path>')
 def send_js(path):

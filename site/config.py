@@ -14,5 +14,9 @@ config = {
     'log_level': logging.DEBUG,
     'log_max_bytes': 10000000,
     'log_backup_count': 5,
-    'google_analytics_token': ''
+    'google_analytics_token': '',
+    'languages': {
+        'es': 'Spanish',
+        'ro': 'Romanian'
+    }
 }
