@@ -193,6 +193,10 @@ def conjugate():
     verb = request.form['verb']
     translate = request.form['translate']
     translate = translate == 'true'
+    english_prefix = 'to '
+
+    if (translate or lang == 'en') and verb.startswith(english_prefix):
+        verb = verb[len(english_prefix):]
 
     if translate:
         def make_verb(translation):
