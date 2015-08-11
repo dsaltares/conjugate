@@ -16,7 +16,9 @@ config = {
     'log_backup_count': 5,
     'google_analytics_token': '',
     'languages': {
-        'es': 'Spanish',
-        'ro': 'Romanian'
+        'en': 'English',
+        'de': 'German',
+        'ro': 'Romanian',
+        'es': 'Spanish'
     }
 }
