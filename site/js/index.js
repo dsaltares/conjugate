@@ -50,7 +50,9 @@ $(document).ready(function(){
                                    .fail(onConjugationFailed);
     });
 
-    $('#lang').change(function(){
+    $('#lang').change(checkEnglishLanguageSelected);
+
+    function checkEnglishLanguageSelected() {
         var lang = $('#lang').first().val();
 
         if (lang === 'en') {
@@ -60,7 +62,7 @@ $(document).ready(function(){
         else {
             $('#translate').attr('disabled', false);
         }
-    });
+    }
 
     function setupFromCookie() {
         var lang = cookie.getValue('lang');
@@ -78,6 +80,8 @@ $(document).ready(function(){
         if (translate === 'true') {
             $('#translate').prop('checked', true);
         }
+
+        checkEnglishLanguageSelected();
     }
 
     function saveToCookie(params) {
