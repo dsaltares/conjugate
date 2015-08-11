@@ -16,7 +16,8 @@ class VerbixScraper:
         'pt': 2,
         'fr': 3,
         'ca': 4,
-        'de': 13
+        'de': 13,
+        'en': 20
     }
 
     __retries = 5
