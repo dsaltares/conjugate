@@ -15,7 +15,7 @@ class VerbixScraper:
         'es': 1,
         'pt': 2,
         'fr': 3,
-        'ca': 4,
+        'ca': 7,
         'de': 13,
         'en': 20
     }
