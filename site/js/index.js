@@ -1,3 +1,6 @@
+var s_LANGUAGE_PROPERTY = 'conjugate.lang';
+var s_VERB_PROPERTY = 'conjugate.verb';
+var s_TRANSLATE_PROPERTY = 'conjugate.translate';
 var s_DISCLAIMER_PROPERTY = 'disclaimerShown';
 
 var cookie = {
@@ -67,9 +70,9 @@ $(document).ready(function(){
     }
 
     function setupFromCookie() {
-        var lang = cookie.getValue('lang');
-        var verb = cookie.getValue('verb');
-        var translate = cookie.getValue('translate');
+        var lang = cookie.getValue(s_LANGUAGE_PROPERTY);
+        var verb = cookie.getValue(s_VERB_PROPERTY);
+        var translate = cookie.getValue(s_TRANSLATE_PROPERTY);
         var disclaimerAccepted = cookie.getValue(s_DISCLAIMER_PROPERTY);
 
         if (lang) {
@@ -92,9 +95,9 @@ $(document).ready(function(){
     }
 
     function saveToCookie(params) {
-        cookie.setValue('lang', params.lang);
-        cookie.setValue('verb', params.verb);
-        cookie.setValue('translate', params.translate);
+        cookie.setValue(s_LANGUAGE_PROPERTY, params.lang);
+        cookie.setValue(s_VERB_PROPERTY, params.verb);
+        cookie.setValue(s_TRANSLATE_PROPERTY, params.translate);
     }
 
     function showCookieDisclaimer() {
