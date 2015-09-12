@@ -1,3 +1,5 @@
+var s_DISCLAIMER_PROPERTY = 'disclaimerShown';
+
 var cookie = {
     setValue: function(name, value, expiryDays) {
         expiryDays = expiryDays || 10;
@@ -68,6 +70,7 @@ $(document).ready(function(){
         var lang = cookie.getValue('lang');
         var verb = cookie.getValue('verb');
         var translate = cookie.getValue('translate');
+        var disclaimerAccepted = cookie.getValue(s_DISCLAIMER_PROPERTY);
 
         if (lang) {
             $('#lang').val(lang);
@@ -82,12 +85,25 @@ $(document).ready(function(){
         }
 
         checkEnglishLanguageSelected();
+
+        if (disclaimerAccepted !== 'true') {
+            showCookieDisclaimer();
+        }
     }
 
     function saveToCookie(params) {
         cookie.setValue('lang', params.lang);
         cookie.setValue('verb', params.verb);
         cookie.setValue('translate', params.translate);
+    }
+
+    function showCookieDisclaimer() {
+        $('#cookies-modal').openModal({
+            dismissible: false,
+            complete: function () {
+                cookie.setValue(s_DISCLAIMER_PROPERTY, true)
+            }
+        });
     }
 
     function onConjugationSucceeded(response) {
